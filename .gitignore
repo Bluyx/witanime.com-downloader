@@ -1,0 +1,5 @@
+checkDownloader.py
+animes/
+tests/
+__pycache__/
+downloads/__pycache__/

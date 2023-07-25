@@ -1,0 +1,5 @@
+tls_client
+beautifulsoup4
+pycryptodome
+tqdm
+gdown

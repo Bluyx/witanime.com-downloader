@@ -1,0 +1,9 @@
+{
+    "outputFormat": "[Hello] {anime_name}_{episode}.mp4",
+    "download_priorities": [
+        "google_drive",
+        "mediafire",
+        "mega",
+        "tusfiles"
+    ]
+}
