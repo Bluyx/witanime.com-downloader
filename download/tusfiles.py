@@ -1,6 +1,7 @@
 import requests, os
 from tqdm import tqdm
 from urllib.parse import urlparse, urlunparse
+from console import console
 
 def tusfiles(client, url, saveAs):
     fileID = url.split(".com/")[1].split("/")[0]
@@ -36,7 +37,7 @@ def tusfiles(client, url, saveAs):
     response = client.get(url, stream=True)
     total_size = int(response.headers.get("Content-Length", 0))
     with open(saveAs, "wb") as file:
-        print(f"Downloading {saveAs} using Tusfiles")
+        console.info(f"Downloading {saveAs} using Tusfiles")
         progress_bar = tqdm(total=total_size, unit="B", unit_scale=True, ncols=100)
         for data in response.iter_content(chunk_size=512*1024):
             file.write(data)

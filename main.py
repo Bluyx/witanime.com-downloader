@@ -1,7 +1,7 @@
 import sys, json, tls_client, os, random, string
 from bs4 import BeautifulSoup as soup
 from download import *
-
+from console import console
 
 # webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/1123671857086877766/gdI7c5bRNj5aMx7R34b-kGhr956gCMUPapYiRFjFJtJL-nXsIvTR3ocbQyHbfbPhZD5K")
 with open("config.json", 'r') as c:
@@ -29,25 +29,23 @@ headers = {
 }
 
 
-# https://witanime.com/anime/naruto/
 animeURL = input("Anime URL: ")
 if "https://witanime.com/anime" not in animeURL: sys.exit("Invalid Anime URL. Use 'https://witanime.com/animeName' format.")
 try:
     fromEpisode = int(input("Start downloading from episode: "))
     toEpisode = int(input("stop downloading at episode: "))
-except ValueError: sys.exit("Only numbers")
+except ValueError: sys.exit(console.error("Only numbers"))
 if fromEpisode > toEpisode:
-    sys.exit(f"{fromEpisode} is greater than {toEpisode}")
+    sys.exit(console.error(f"{fromEpisode} is greater than {toEpisode}"))
 animePage = soup(client.get(animeURL, headers=headers).text, 'html.parser')
-# episodesCount = animePage.find("div", {"class": "anime-info"}, string="عدد الحلقات")
 episodesCount = animePage.find(lambda tag: tag.name == 'span' and "عدد الحلقات" in tag.text).find_next_sibling(string=True).strip()
 if "غير معروف" in episodesCount:
-    maxEpisodes = 9999999999
+    maxEpisodes = 99999999999999999999
 else:
     maxEpisodes = int(episodesCount)
 
 if toEpisode > maxEpisodes:
-    sys.exit(f"the anime have {maxEpisodes} and you want stop downloading at {toEpisode}")
+    sys.exit(console.error(f"the anime have {maxEpisodes} episodes and you want stop downloading at episode {toEpisode}"))
 
 animeName = animeURL.split("/anime/")[1].split("/")[0]
 if not os.path.isdir("animes"): os.makedirs("animes")
@@ -102,4 +100,7 @@ for episode in range(toEpisode):
         for priorityDownload in sorted(availableDownloads, key=lambda item: download_priorities.index(item) if item.replace(" ", "_") in download_priorities else len(download_priorities)):
             downloadFunction, downloadLink, saveAs = downloadFunctions[priorityDownload]
             if downloadFunction(client, downloadLink, saveAs):
+                console.success(f"{saveAs} Downloaded!\n")
                 break
+
+console.success("Downloaded!")

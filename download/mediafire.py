@@ -1,4 +1,5 @@
 import os, shutil, sys, tempfile, requests, tqdm, os, time, bs4, zipfile
+from console import console
 
 
 def mediafire(client, url, saveAs):
@@ -8,7 +9,7 @@ def mediafire(client, url, saveAs):
     res = requests.get(downloadURL, stream=True, timeout=10)
     total = int(res.headers.get('Content-Length'))
     with tempfile.NamedTemporaryFile(mode="w+b", prefix="mediafireDL_", delete=False) as temp_output_file:
-        print(f"Downloading {saveAs} using Mediafire")
+        console.info(f"Downloading {saveAs} using Mediafire")
         progress_bar = tqdm.tqdm(total=total, unit='B', unit_scale=True, ncols=100)
         for chunk in res.iter_content(chunk_size=512 * 1024):  # 512KB
             temp_output_file.write(chunk)
@@ -24,7 +25,7 @@ def mediafire(client, url, saveAs):
             os.rename(zFile.namelist()[0], saveAs)
         except FileExistsError:
             os.remove(zFile.namelist()[0])
-            print(f"{saveAs} already downloaded")
+            console.error(f"{saveAs} already downloaded")
     os.remove(zipFileName)
     return True
 

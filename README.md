@@ -18,7 +18,7 @@ python main.py
 ```
     
 ## Screenshots
-![App Screenshot](https://cdn.discordapp.com/attachments/1123671843069505687/1129436602108747787/image.png)
+![App Screenshot](https://cdn.discordapp.com/attachments/1127640051677921330/1133533441334464562/image.png)
 
 
 ## Todo List

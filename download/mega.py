@@ -3,7 +3,7 @@ import re, requests, json, random, tempfile, shutil, os, time, tqdm, struct, bas
 from Crypto.Util import Counter
 from Crypto.Cipher import AES
 from pathlib import Path
-
+from console import console
 
 i = 0
 def get_chunks(size):
@@ -91,7 +91,7 @@ def mega(client, url, saveAs):
         mac_encryptor = AES.new(k_str, AES.MODE_CBC, mac_str.encode("utf8"))
         kk = [iv[0], iv[1], iv[0], iv[1]]
         iv_str = struct.pack('>%dI' % len(kk), *kk)
-        print(f"Downloading {saveAs} using Mega")
+        console.info(f"Downloading {saveAs} using Mega")
         progress_bar = tqdm.tqdm(total=file_size, unit="B", unit_scale=True, ncols=100)
         for chunk_start, chunk_size in get_chunks(file_size):
             chunk = input_file.read(chunk_size)
