@@ -3,12 +3,15 @@ from bs4 import BeautifulSoup as soup
 from download import *
 from console import console
 
-# webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/1123671857086877766/gdI7c5bRNj5aMx7R34b-kGhr956gCMUPapYiRFjFJtJL-nXsIvTR3ocbQyHbfbPhZD5K")
+# Todo: notify when download is completed
+# webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/xxxxxxx/xxxxxxxxxxx")
+
 with open("config.json", 'r') as c:
     config = json.load(c)
 
 
 download_priorities = config["download_priorities"]
+witURL = config["witanimeURL"]
 
 client = tls_client.Session(client_identifier="chrome_114", random_tls_extension_order=True, ja3_string="".join(random.choice(string.digits + string.ascii_lowercase) for x in range(1000)))
 headers = {
@@ -16,7 +19,7 @@ headers = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'accept-language': 'en-US,en;q=0.9,ar;q=0.8',
     'cache-control': 'max-age=0',
-    'referer': 'https://witanime.com/?search_param=animes&s=bleach',
+    'referer': f'{witURL}/',
     'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"Windows"',
@@ -30,7 +33,7 @@ headers = {
 
 
 animeURL = input("Anime URL: ")
-if "https://witanime.com/anime" not in animeURL: sys.exit("Invalid Anime URL. Use 'https://witanime.com/animeName' format.")
+if f"{witURL}/anime" not in animeURL: sys.exit(f"Invalid Anime URL. Use '{witURL}/animeName' format.")
 try:
     fromEpisode = int(input("Start downloading from episode: "))
     toEpisode = int(input("stop downloading at episode: "))
@@ -56,10 +59,9 @@ for episode in range(toEpisode):
     episode = episode + fromEpisode # Todo
     if episode == toEpisode + 1:
         break
-    episodePage = soup(client.get(f"https://witanime.com/episode/{animeName}-الحلقة-{episode}/", headers=headers).text, features="lxml")
+    episodePage = soup(client.get(f"{witURL}/episode/{animeName}-الحلقة-{episode}/", headers=headers).text, features="lxml")
     saveAs = f"animes/{animeName}/{config['outputFormat'].replace('{anime_name}', animeName).replace('{episode}', str(episode))}"
     downloadFunctions = {
-        # "mega": (mega, None),
         "google_drive": (google_drive, None, None),
         "tusfiles": (tusfiles, None, None),
         "mega": (mega, None, None),

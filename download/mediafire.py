@@ -3,9 +3,10 @@ from console import console
 
 
 def mediafire(client, url, saveAs):
+    zipFile = None
     downloadURL = bs4.BeautifulSoup(client.get(url).text, "html.parser").find("a", {"id": "downloadButton"})["href"]
     if downloadURL.endswith(".zip"):
-        zipFileName = f'{".".join(saveAs.split(".")[:-1])}.zip'
+        zipFile = f'{".".join(saveAs.split(".")[:-1])}.zip'
     res = requests.get(downloadURL, stream=True, timeout=10)
     total = int(res.headers.get('Content-Length'))
     with tempfile.NamedTemporaryFile(mode="w+b", prefix="mediafireDL_", delete=False) as temp_output_file:
@@ -18,15 +19,16 @@ def mediafire(client, url, saveAs):
         if temp_output_file:
             temp_output_file.close()
             time.sleep(1)
-            shutil.move(temp_output_file.name, zipFileName)
-    with zipfile.ZipFile(zipFileName, 'r') as zFile:
-        shutil.unpack_archive(zipFileName, '.', 'zip')
-        try:
-            os.rename(zFile.namelist()[0], saveAs)
-        except FileExistsError:
-            os.remove(zFile.namelist()[0])
-            console.error(f"{saveAs} already downloaded")
-    os.remove(zipFileName)
+            shutil.move(temp_output_file.name, saveAs)
+    if zipFile:
+        with zipfile.ZipFile(zipFile, "r") as zFile:
+            shutil.unpack_archive(zipFile, ".", "zip")
+            try:
+                os.rename(zFile.namelist()[0], saveAs)
+            except FileExistsError:
+                os.remove(zFile.namelist()[0])
+                console.error(f"{saveAs} already downloaded")
+        os.remove(saveAs)
     return True
 
 

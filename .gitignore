@@ -3,3 +3,4 @@ animes/
 tests/
 __pycache__/
 downloads/__pycache__/
+.gitignore
