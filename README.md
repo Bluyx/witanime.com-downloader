@@ -11,7 +11,7 @@ Don’t forget to ⭐️
 
 ## Installation
 ```bash
-git clone https://github.com/Shiiivx/witanime.com-downloader
+git clone https://github.com/Bluyx/witanime.com-downloader
 cd witanime.com-downloader
 pip install -r requirements.txt
 python main.py
