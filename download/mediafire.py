@@ -10,7 +10,7 @@ def mediafire(client, url, saveAs):
     res = requests.get(downloadURL, stream=True, timeout=10)
     total = int(res.headers.get('Content-Length'))
     with tempfile.NamedTemporaryFile(mode="w+b", prefix="mediafireDL_", delete=False) as temp_output_file:
-        console.info(f"Downloading {saveAs} using Mediafire")
+        console.info(f"Downloading {zipFile or saveAs} using Mediafire")
         progress_bar = tqdm.tqdm(total=total, unit='B', unit_scale=True, ncols=100)
         for chunk in res.iter_content(chunk_size=512 * 1024):  # 512KB
             temp_output_file.write(chunk)
@@ -19,7 +19,7 @@ def mediafire(client, url, saveAs):
         if temp_output_file:
             temp_output_file.close()
             time.sleep(1)
-            shutil.move(temp_output_file.name, saveAs)
+            shutil.move(temp_output_file.name, zipFile or saveAs)
     if zipFile:
         with zipfile.ZipFile(zipFile, "r") as zFile:
             shutil.unpack_archive(zipFile, ".", "zip")
@@ -28,7 +28,7 @@ def mediafire(client, url, saveAs):
             except FileExistsError:
                 os.remove(zFile.namelist()[0])
                 console.error(f"{saveAs} already downloaded")
-        os.remove(saveAs)
+        os.remove(zipFile)
     return True
 
 

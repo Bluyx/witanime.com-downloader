@@ -40,7 +40,7 @@ try:
 except ValueError: sys.exit(console.error("Only numbers"))
 if fromEpisode > toEpisode:
     sys.exit(console.error(f"{fromEpisode} is greater than {toEpisode}"))
-animePage = soup(client.get(animeURL, headers=headers).text, 'html.parser')
+animePage = soup(client.get(animeURL, headers=headers, allow_redirects=True).text, 'html.parser')
 episodesCount = animePage.find(lambda tag: tag.name == 'span' and "عدد الحلقات" in tag.text).find_next_sibling(string=True).strip()
 if "غير معروف" in episodesCount:
     maxEpisodes = 99999999999999999999
@@ -59,7 +59,7 @@ for episode in range(toEpisode):
     episode = episode + fromEpisode # Todo
     if episode == toEpisode + 1:
         break
-    episodePage = soup(client.get(f"{witURL}/episode/{animeName}-الحلقة-{episode}/", headers=headers).text, features="lxml")
+    episodePage = soup(client.get(f"{witURL}/episode/{animeName}-الحلقة-{episode}/", headers=headers, allow_redirects=True).text, features="lxml")
     saveAs = f"animes/{animeName}/{config['outputFormat'].replace('{anime_name}', animeName).replace('{episode}', str(episode))}"
     downloadFunctions = {
         "google_drive": (google_drive, None, None),
