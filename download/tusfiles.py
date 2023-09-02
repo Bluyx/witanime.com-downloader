@@ -29,12 +29,12 @@ def tusfiles(client, url, saveAs):
         "method_free": "",
         "method_premium": "1"
     }
-    response = client.post(f"https://tusfiles.com/{fileID}", headers=headers, data=data, allow_redirects=False, timeout=10, verify=True)
+    response = client.post(f"https://tusfiles.com/{fileID}", headers=headers, data=data, allow_redirects=False, timeout_seconds=10, insecure_skip_verify=True)
     parsed_url = urlparse(response.headers["Location"])
     netloc = parsed_url.netloc.split(":")[0]
     modified_path = parsed_url.path.replace(" ", "%20")
     url = urlunparse((parsed_url.scheme, netloc, modified_path, parsed_url.params, parsed_url.query, parsed_url.fragment))
-    response = client.get(url, stream=True)
+    response = requests.get(url, stream=True)
     total_size = int(response.headers.get("Content-Length", 0))
     with open(saveAs, "wb") as file:
         console.info(f"Downloading {saveAs} using Tusfiles")

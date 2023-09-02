@@ -4,7 +4,10 @@ from console import console
 
 def mediafire(client, url, saveAs):
     zipFile = None
-    downloadURL = bs4.BeautifulSoup(client.get(url).text, "html.parser").find("a", {"id": "downloadButton"})["href"]
+    mediafire = client.get(url)
+    if mediafire.status_code not in [200, 201]:
+        return False
+    downloadURL = bs4.BeautifulSoup(mediafire.text, "html.parser").find("a", {"id": "downloadButton"})["href"]
     if downloadURL.endswith(".zip"):
         zipFile = f'{".".join(saveAs.split(".")[:-1])}.zip'
     res = requests.get(downloadURL, stream=True, timeout=10)
