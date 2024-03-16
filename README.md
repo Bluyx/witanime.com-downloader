@@ -1,5 +1,5 @@
-# witanime.com downloader
-witanime.com downloader
+# witanime downloader
+witanime downloader
 
 ⭐️ the repo
 
