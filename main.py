@@ -1,4 +1,4 @@
-import sys, json, tls_client, os, random, string
+import sys, json, tls_client, os, random, string, base64
 from bs4 import BeautifulSoup as soup
 from download import *
 from console import console
@@ -62,10 +62,11 @@ for episode in range(toEpisode):
     episodePage = soup(client.get(f"{witURL}/episode/{animeName}-الحلقة-{episode}/", headers=headers, allow_redirects=True).text, features="lxml")
     saveAs = f"animes/{animeName}/{config['outputFormat'].replace('{anime_name}', animeName).replace('{episode}', str(episode))}"
     downloadFunctions = {
+        "wahmi": (wahmi, None, None),
         "google_drive": (google_drive, None, None),
         "tusfiles": (tusfiles, None, None),
         "mega": (mega, None, None),
-        "mediafire": (mediafire, None, None),
+        "mediafire": (mediafire, None, None)
     }
     availableDownloads = []
     FHD = episodePage.find("li", string="الجودة الخارقة FHD")
@@ -82,9 +83,13 @@ for episode in range(toEpisode):
     for downloadMethod in downloadLinks.find_all("li"):
         try:
             downloadLink = downloadMethod.find("a").get("href")
-            downloadText = downloadMethod.find("a").text.lower()
+            if downloadLink is None:
+                downloadLink = base64.b64decode(downloadMethod.find("a").get("data-url")).decode()
+            downloadText = downloadMethod.find("a").text.lower().strip()
             if downloadText.replace(" ", "_") in downloadFunctions:
                 availableDownloads.append(downloadText.replace(" ", "_"))
+            if downloadText == "wahmi":
+                downloadFunctions["wahmi"] = (wahmi, downloadLink, saveAs)
             if downloadText == "google drive":
                 downloadFunctions["google_drive"] = (google_drive, downloadLink, saveAs)
             elif downloadText == "tusfiles":

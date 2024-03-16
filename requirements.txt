@@ -4,3 +4,4 @@ pycryptodome
 tqdm
 gdown
 colorama
+lxml
