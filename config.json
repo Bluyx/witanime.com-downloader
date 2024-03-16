@@ -1,6 +1,7 @@
 {
     "outputFormat": "[Hello] {anime_name}_{episode}.mp4",
     "download_priorities": [
+        "wahmi",
         "google_drive",
         "mediafire",
         "mega",
