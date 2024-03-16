@@ -1,7 +1,7 @@
 # witanime.com downloader
 witanime.com downloader
 
-Don’t forget to ⭐️
+⭐️ the repo
 
 
 ## Features
