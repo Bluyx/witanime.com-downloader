@@ -2,6 +2,7 @@ import sys, json, tls_client, os, random, string, base64
 from bs4 import BeautifulSoup as soup
 from download import *
 from console import console
+from urllib.parse import urlparse
 
 # Todo: notify when download is completed
 # webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/xxxxxxx/xxxxxxxxxxx")
@@ -11,9 +12,13 @@ with open("config.json", 'r') as c:
 
 
 download_priorities = config["download_priorities"]
-witURL = config["witanimeURL"]
 
-client = tls_client.Session(client_identifier="chrome_114", random_tls_extension_order=True, ja3_string="".join(random.choice(string.digits + string.ascii_lowercase) for x in range(1000)))
+client = tls_client.Session(client_identifier="chrome_120", random_tls_extension_order=True, ja3_string="".join(random.choice(string.digits + string.ascii_lowercase) for x in range(1000)))
+
+animeURL = input("Anime URL: ")
+witURL = urlparse(animeURL)
+witURL = f"{witURL.scheme}://{witURL.netloc}"
+if f"/anime/" not in animeURL: sys.exit(f"Invalid Anime URL. Use '{witURL}/anime/one-piece' format.")
 headers = {
     'authority': 'witanime.com',
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -32,8 +37,6 @@ headers = {
 }
 
 
-animeURL = input("Anime URL: ")
-if f"{witURL}/anime" not in animeURL: sys.exit(f"Invalid Anime URL. Use '{witURL}/animeName' format.")
 try:
     fromEpisode = int(input("Start downloading from episode: "))
     toEpisode = int(input("stop downloading at episode: "))
