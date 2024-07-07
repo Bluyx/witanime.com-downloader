@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup as soup
 from download import *
 from console import console
 from urllib.parse import urlparse
-
+import re
 # Todo: notify when download is completed
 # webhook = SyncWebhook.from_url("https://discord.com/api/webhooks/xxxxxxx/xxxxxxxxxxx")
 
@@ -62,7 +62,8 @@ for episode in range(toEpisode):
     episode = episode + fromEpisode # Todo
     if episode == toEpisode + 1:
         break
-    episodePage = soup(client.get(f"{witURL}/episode/{animeName}-الحلقة-{episode}/", headers=headers, allow_redirects=True).text, features="lxml")
+    epPage = client.get(f"{witURL}/episode/{animeName}-الحلقة-{episode}/", headers=headers, allow_redirects=True).text
+    episodePage = soup(epPage, features="lxml")
     saveAs = f"animes/{animeName}/{config['outputFormat'].replace('{anime_name}', animeName).replace('{episode}', str(episode))}"
     downloadFunctions = {
         "wahmi": (wahmi, None, None),
@@ -83,11 +84,22 @@ for episode in range(toEpisode):
         downloadLinks = SD.find_parent("ul")
     else:
         print("No UL")
-    for downloadMethod in downloadLinks.find_all("li"):
+    downloadLinks = downloadLinks.find_all("li")[1:]
+    search = re.search(r'var downloadUrls = ({.*});', epPage)
+    if search:
+        
+        downloadUrlsDict = json.loads(search.group(1))
+        #input(downloadUrlsDict)
+    else:
+        sys.exit("No dict found")
+    for downloadMethod in downloadLinks:
         try:
             downloadLink = downloadMethod.find("a").get("href")
-            if downloadLink is None:
+            downloadKey = downloadMethod.find("a").get("data-key")
+            if downloadLink is None and downloadKey is None:
                 downloadLink = base64.b64decode(downloadMethod.find("a").get("data-url")).decode()
+            if downloadKey:
+                downloadLink = base64.b64decode(downloadUrlsDict[downloadKey]).decode()
             downloadText = downloadMethod.find("a").text.lower().strip()
             if downloadText.replace(" ", "_") in downloadFunctions:
                 availableDownloads.append(downloadText.replace(" ", "_"))
