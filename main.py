@@ -85,22 +85,36 @@ for episode in range(toEpisode):
     else:
         print("No UL")
     downloadLinks = downloadLinks.find_all("li")[1:]
-    search = re.search(r'var downloadUrls = ({.*});', epPage)
+    search = re.search(r'var _d = (\[.*?\]);', epPage)
+    n = json.loads(re.search(r'var _n = (\[.*?\]);', epPage).group(1))
     if search:
-        
-        downloadUrlsDict = json.loads(search.group(1))
+        downloadUrls = json.loads(search.group(1))
         #input(downloadUrlsDict)
+        #input(n)
     else:
         sys.exit("No dict found")
     for downloadMethod in downloadLinks:
+        #print(downloadLinks)
         try:
-            downloadLink = downloadMethod.find("a").get("href")
-            downloadKey = downloadMethod.find("a").get("data-key")
-            if downloadLink is None and downloadKey is None:
-                downloadLink = base64.b64decode(downloadMethod.find("a").get("data-url")).decode()
-            if downloadKey:
-                downloadLink = base64.b64decode(downloadUrlsDict[downloadKey]).decode()
+            downloadIndex = int(downloadMethod.find("a").get("data-index"))
+            #downloadLink = downloadMethod.find("a").get("href")
+            #downloadKey = downloadMethod.find("a").get("data-key")
+            #if downloadLink is None and downloadKey is None:
+            #    downloadLink = base64.b64decode(downloadMethod.find("a").get("data-url")).decode()
+            #if downloadKey:
+            #    downloadLink = base64.b64decode(downloadUrlsDict[downloadKey]).decode()
+            #input(downloadUrls)
+       
+            downloadLink = base64.b64decode(downloadUrls[downloadIndex]).decode()
+            print(downloadLink)
+            #print(downloadIndex)
+            #n = n[downloadIndex]
+            #input(n[downloadIndex]["d"])
+            #print(base64.b64decode(n[downloadIndex]["k"]).encode())
+            #downloadLink = downloadLink.slice(0, -n["d"][int(base64.b64decode(n[downloadIndex]["k"]).decode())])
+            #print(downloadLink)
             downloadText = downloadMethod.find("a").text.lower().strip()
+            print(downloadText)
             if downloadText.replace(" ", "_") in downloadFunctions:
                 availableDownloads.append(downloadText.replace(" ", "_"))
             if downloadText == "wahmi":
@@ -116,6 +130,8 @@ for episode in range(toEpisode):
             else: pass
         except AttributeError as err:
             pass
+        except Error as err:
+            print(str(err))
     if len(availableDownloads) == 0:
         print("Not supported")
     else:
