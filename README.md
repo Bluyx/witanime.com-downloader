@@ -1,9 +1,6 @@
 # witanime downloader
 witanime downloader
 
-⭐️ the repo
-
-
 ## Features
 - Priority System: Choose your preferred download service, and the downloader will automatically prioritize it, trying alternative services if needed.
 - Formatted File Name: Customize file naming using {anime_title} and {episode} placeholders.
